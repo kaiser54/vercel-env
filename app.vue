@@ -134,10 +134,10 @@ body {
   justify-content: center;
 }
 
-/* .main-con {
-  max-width: 800px;
-  width: 70%;
-} */
+.main-con {
+  max-width: 500px;
+  width: 100vw;
+}
 
 h1 {
   font-size: 24px;
@@ -203,7 +203,7 @@ textarea {
   width: 100%;
   flex-grow: 1;
   padding: 8px !important;
-  display: none;
+  display: flex;
   min-height: 32px;
   max-height: 120px;
 }
