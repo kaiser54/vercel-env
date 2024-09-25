@@ -8,22 +8,18 @@
           :input="input"
           @delete="deleteInput(index)"
           @update="updateInput(index, $event)"
+          @paste="handlePaste($event, index)"
         />
       </div>
     </div>
     <div class="border btn-group">
       <button id="addButton" @click="addInput">
-        <div class="svg" v-html="plusSvg"></div>
+        <span v-html="plusSvg"></span>
         <span>Add another</span>
       </button>
       <p class="snippet">or paste the .env contents above</p>
     </div>
-    <input
-      type="file"
-      id="fileInput"
-      accept=".env"
-      @change="handleFileUpload"
-    />
+    <input type="file" id="fileInput" accept=".env" @change="handleFileUpload" />
     <DropZone @file-dropped="handleFileDrop" />
   </div>
 </template>
@@ -74,25 +70,36 @@ export default {
         parseAndAppendEnvFile(text);
       };
       reader.onerror = (e) => {
-        console.error('File reading error:', e);
+        console.error("File reading error:", e);
       };
       reader.readAsText(file);
     };
 
-    const parseAndAppendEnvFile = (text) => {
-      const lines = text.split('\n');
+    const parseAndAppendEnvFile = (text, startIndex = inputs.value.length) => {
+      const lines = text.split("\n");
+      let currentIndex = startIndex;
+
       lines.forEach((line) => {
-        if (line.trim() && !line.startsWith('#')) {
-          const [key, value] = line.split('=');
+        if (line.trim() && !line.startsWith("#")) {
+          const [key, value] = line.split("=");
           if (key && value !== undefined) {
-            inputs.value.push({
-              key: key.trim(),
-              value: value.trim(),
-              note: '',
-            });
+            if (currentIndex < inputs.value.length) {
+              // Update existing input
+              inputs.value[currentIndex] = { key: key.trim(), value: value.trim(), note: '' };
+            } else {
+              // Add new input
+              inputs.value.push({ key: key.trim(), value: value.trim(), note: '' });
+            }
+            currentIndex++;
           }
         }
       });
+    };
+
+    const handlePaste = (event, index) => {
+      event.preventDefault();
+      const pastedText = event.clipboardData.getData('text');
+      parseAndAppendEnvFile(pastedText, index);
     };
 
     return {
@@ -102,11 +109,13 @@ export default {
       updateInput,
       handleFileUpload,
       handleFileDrop,
+      handlePaste,
       plusSvg,
     };
   },
 };
 </script>
+
 
 <style>
 /* @import 'geist/font.css'; */
