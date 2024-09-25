@@ -14,7 +14,7 @@
     </div>
     <div class="border btn-group">
       <button id="addButton" @click="addInput">
-        <span v-html="plusSvg"></span>
+        <span class="svg" v-html="plusSvg"></span>
         <span>Add another</span>
       </button>
       <p class="snippet">or paste the .env contents above</p>
